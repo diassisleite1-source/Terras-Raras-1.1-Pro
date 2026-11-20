@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#040812">
+  <meta name="description" content="Terras Raras: Mining Tycoon - Simulador gameificado de mineração, refino e tecnologia espacial com salvamento redundante Firebase + LocalStorage.">
+  <title>Terras Raras | Mining Tycoon v4.5 (Firebase + Local)</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2322c55e'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='%23091321'/%3E%3Crect x='24' y='24' width='464' height='464' rx='90' fill='none' stroke='url(%23g)' stroke-width='20'/%3E%3Ctext x='256' y='300' font-family='sans-serif' font-weight='900' font-size='190' fill='url(%23g)' text-anchor='middle'%3ETR%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio" id="brandHome" aria-label="Terras Raras início">
+        <span class="brand-mark bounce-hover">💎</span>
+        <span><strong>TERRAS RARAS</strong><small>MINING TYCOON v4.5</small></span>
+      </a>
+
+      <div class="company-card game-badge-card">
+        <div class="company-icon sticker-float">👷‍♂️</div>
+        <div>
+          <strong id="companyName">Diretor VovôBrDias</strong>
+          <small>Nível <span id="companyLevel" class="lvl-pill">1</span> · <span id="cloudSyncStatus">⏳ Conectando...</span></small>
+        </div>
+      </div>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-link active" type="button" data-view="dashboard"><span class="nav-sticker">🏰</span> Base Central</button>
+        <button class="nav-link" type="button" data-view="missions"><span class="nav-sticker">🎯</span> Missões <b class="nav-count pulse-badge" id="missionCount">1</b></button>
+        <button class="nav-link" type="button" data-view="production"><span class="nav-sticker">⚙️</span> Fábrica & Brita</button>
+        <button class="nav-link" type="button" data-view="market"><span class="nav-sticker">💰</span> Bolsa & Vendas</button>
+        <button class="nav-link" type="button" data-view="upgrades"><span class="nav-sticker">🚀</span> Hangar & Máquinas</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="help-box mascot-tip">
+          <span class="mascot-avatar">🤖</span>
+          <div>
+            <strong>Save Duplo Ativo</strong>
+            <p id="mascotTipText">Seu progresso é salvo no navegador (localStorage) e sincronizado com o Firebase.</p>
+          </div>
+        </div>
+        <button class="reset-link" id="resetGame" type="button">🔄 Reiniciar Campanha</button>
+        <small class="version">GAME EDITION v4.5 · FIREBASE + LOCAL</small>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Abrir menu">☰</button>
+        <div class="breadcrumb"><span>SETOR</span><i>▶</i><strong id="pageTitle">Base Central</strong></div>
+        <div class="top-actions">
+          <button class="game-chip-btn" id="forceSyncBtn" type="button" title="Forçar sincronização agora">☁️ Salvar Nuvem</button>
+          <button class="game-chip-btn" id="sfxToggleBtn" type="button" title="Ativar/Desativar Efeitos Sonoros">🔊 SFX: ON</button>
+          <button class="game-chip-btn" id="newGame" type="button" title="Começar uma nova partida">✨ Novo Jogo</button>
+          <div class="top-stat coin-hud" id="coinHud">
+            <span class="coin sticker-spin">🪙</span>
+            <span id="topCoins">250.000</span>
+            <small>CRÉDITOS</small>
+          </div>
+          <div class="user-avatar" title="Diretor VovôBrDias">👑</div>
+        </div>
+      </header>
+
+      <section class="audio-bar" aria-label="Narrador do Jogo">
+        <div class="audio-copy">
+          <span class="audio-symbol sticker-pulse">🎙️</span>
+          <div>
+            <strong>Narrador Tático & Voz</strong>
+            <small id="audioStatus">Clique em "Ouvir Objetivo" nas missões para narração.</small>
+          </div>
+        </div>
+        <div class="audio-actions">
+          <button class="audio-btn audio-main" id="audioEnable" type="button">▶ Testar Voz</button>
+          <button class="audio-btn" id="audioRepeat" type="button">↻ Repetir</button>
+          <button class="audio-btn" id="audioToggle" type="button" aria-pressed="true">Voz Ligada</button>
+        </div>
+      </section>
+
+      <!-- VIEW: DASHBOARD -->
+      <section class="view active" id="view-dashboard">
+        <div class="welcome-row">
+          <div>
+            <div class="eyebrow"><span class="live-dot"></span> OPERAÇÃO ATIVA · IMPÉRIO VOVÔBRDIAS</div>
+            <h1>Base de Comando <span>Industrial</span></h1>
+            <p>Transforme rochas brutas em tecnologia espacial com salvamento local e sincronização com a nuvem.</p>
+          </div>
+          <div class="welcome-actions">
+            <div class="date-chip">💾 <span id="firebaseUidLabel">Armazenamento Seguro</span></div>
+            <button class="btn btn-outline" id="mineBonusBtn" type="button">⛏️ Extrair +1.000 Minério</button>
+          </div>
+        </div>
+
+        <div class="hero-banner">
+          <div class="hero-copy">
+            <span class="hero-kicker" id="heroKicker">FASE 1 · MINERAÇÃO & BRITAGEM (1-10)</span>
+            <h2 id="heroTitle">Britador BM-1200<br><em>em ação!</em></h2>
+            <p id="heroDesc">Complete as 10 missões industriais para subir de nível, ganhar a Medalha do Diretor e desbloquear a Fase 2 Quântica!</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-light" type="button" data-goto="missions">🎯 Ir para Missões <span>▶</span></button>
+              <button class="btn btn-primary" type="button" data-goto="production">⚙️ Abrir Fábrica</button>
+            </div>
+          </div>
+          <div class="hero-scene" id="heroScene" aria-hidden="true"></div>
+          <div class="hero-index" id="heroIndex">01 <span>/ 20</span></div>
+        </div>
+
+        <div class="section-heading">
+          <div><span class="eyebrow">STATUS EM TEMPO REAL</span><h2>Painel do Jogador</h2></div>
+          <span class="updated-label"><span class="live-dot" style="background:#22c55e"></span> Save Protegido · 25k Minério</span>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card hud-card">
+            <div class="stat-top"><span>Cofre / Créditos</span><span class="stat-icon green sticker-float">💰</span></div>
+            <strong id="statCoins">250.000 <small>CR</small></strong>
+            <div class="stat-foot positive">Capital completo p/ campanha</div>
+          </article>
+          <article class="stat-card hud-card">
+            <div class="stat-top"><span>Minério Bruto</span><span class="stat-icon orange sticker-float">🪨</span></div>
+            <strong id="statOre">25.000 <small>un.</small></strong>
+            <div class="stat-foot">Estoque total para zerar</div>
+          </article>
+          <article class="stat-card hud-card">
+            <div class="stat-top"><span>Itens Produzidos</span><span class="stat-icon blue sticker-float">🏭</span></div>
+            <strong id="statProduction">0 <small>un.</small></strong>
+            <div class="stat-foot">Total refinado</div>
+          </article>
+          <article class="stat-card hud-card">
+            <div class="stat-top"><span>Progresso Campanha</span><span class="stat-icon purple sticker-float">🏆</span></div>
+            <strong id="statMissions">0 <small>/ 20</small></strong>
+            <div class="stat-foot">Fases 1 & 2</div>
+          </article>
+        </div>
+
+        <div class="dashboard-columns">
+          <article class="panel mission-panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow" id="nextMissionEyebrow">MISSÃO ATUAL</span>
+                <h3 id="nextMissionTitle">Missão 01 · Extração mineral</h3>
+              </div>
+              <span class="status-pill" id="nextMissionBadge">ATIVA</span>
+            </div>
+            <p id="nextMissionDesc" class="muted">Extraia seu primeiro lote de minério para iniciar a cadeia produtiva.</p>
+            <div class="progress-label"><span>Progresso da meta</span><strong id="missionProgressText">0%</strong></div>
+            <div class="progress-track"><span id="missionProgressBar" style="width:0%"></span></div>
+            <div class="mission-panel-buttons">
+              <button class="btn btn-light" id="nextMissionActionBtn" type="button" data-goto="missions">Resgatar / Ver Missão <span>→</span></button>
+              <button class="audio-btn" type="button" id="speakMissionBtn">🔊 Ouvir Objetivo</button>
+            </div>
+            <div id="finalChipOfferDashboard"></div>
+          </article>
+
+          <article class="panel stock-panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">MOCHILA & ARMAZÉM</span><h3>Inventário de Recursos</h3></div>
+              <button class="text-button" type="button" data-goto="market">Vender no Mercado →</button>
+            </div>
+            <div id="stockList" class="stock-list"></div>
+          </article>
+        </div>
+
+        <div class="section-heading lower-heading">
+          <div><span class="eyebrow">MAPA DE PROGRESSÃO</span><h2>Linha de Evolução Industrial</h2></div>
+          <button class="text-button" type="button" data-goto="missions">Ver todas as 20 →</button>
+        </div>
+        <div class="chain-strip" id="chainStrip"></div>
+      </section>
+
+      <!-- VIEW: MISSIONS -->
+      <section class="view" id="view-missions">
+        <div class="page-intro">
+          <span class="eyebrow">CAMPANHA PRINCIPAL · 20 DESAFIOS</span>
+          <h1>Quadro de <span>Missões</span></h1>
+          <p>Complete objetivos para ganhar recompensas em Créditos e desbloquear máquinas avançadas!</p>
+        </div>
+        <div class="mission-summary">
+          <div><strong id="missionSummaryCount">0/20</strong><span>concluídas</span></div>
+          <div class="wide-progress">
+            <div class="progress-track"><span id="allMissionProgress" style="width:0%"></span></div>
+            <small id="allMissionPercent">0% da campanha</small>
+          </div>
+          <div class="summary-medal sticker-float">🏆</div>
+        </div>
+        <div id="finalChipOfferMissions"></div>
+        <div class="mission-list" id="missionList"></div>
+      </section>
+
+      <!-- VIEW: PRODUCTION -->
+      <section class="view" id="view-production">
+        <div class="page-intro">
+          <span class="eyebrow">PARQUE INDUSTRIAL & BRITAGEM</span>
+          <h1>Fábrica & <span>Refinaria</span></h1>
+          <p>Opere o britador BM-1200, fornos metalúrgicos e linhas de nanofabricação.</p>
+        </div>
+        <div class="production-layout">
+          <div class="production-main">
+            <div class="section-heading compact">
+              <div><span class="eyebrow">MÁQUINAS DISPONÍVEIS</span><h2>Linhas de Produção</h2></div>
+              <button class="btn btn-outline" id="factoryMineBtn" type="button">⛏️ +1.000 Minério Bruto</button>
+            </div>
+            <div class="process-grid" id="processGrid"></div>
+          </div>
+          <aside class="panel production-aside">
+            <span class="eyebrow">TELEMETRIA DA PLANTA</span>
+            <h3>Status das Máquinas</h3>
+            <div class="factory-visual">
+              <div class="crusher-anim">🏗️⚙️🪨</div>
+            </div>
+            <div class="capacity-row"><span>Eficiência das máquinas</span><strong id="efficiencyValue">100%</strong></div>
+            <div class="progress-track"><span id="efficiencyBar" style="width:100%"></span></div>
+            <div class="aside-divider"></div>
+            <div class="capacity-row"><span>Volume produzido</span><strong id="productionTotal">0 un.</strong></div>
+            <div class="capacity-row"><span>Máquinas instaladas</span><strong id="equipmentTotal">1</strong></div>
+            <p class="small-note">Dica: Use o botão "Acionar 5x" ou "Acionar 1x" nas máquinas para acelerar a produção das fases finais!</p>
+            <button class="btn btn-primary full" type="button" data-goto="upgrades">🚀 Melhorar Máquinas</button>
+          </aside>
+        </div>
+      </section>
+
+      <!-- VIEW: MARKET -->
+      <section class="view" id="view-market">
+        <div class="page-intro">
+          <span class="eyebrow">COMÉRCIO GLOBAL</span>
+          <h1>Bolsa de <span>Commodities</span></h1>
+          <p>Venda seus minérios, ímãs e chips para acumular fortuna e expandir o império.</p>
+        </div>
+        <div class="market-banner">
+          <div>
+            <span class="eyebrow">COTAÇÃO EM ALTA</span>
+            <h2>Converta estoque em Créditos!</h2>
+            <p>O Minério Bruto está cotado a 1.200 CR por unidade.</p>
+          </div>
+          <div class="market-symbol sticker-float">📈</div>
+        </div>
+        <div class="market-grid" id="marketGrid"></div>
+      </section>
+
+      <!-- VIEW: UPGRADES -->
+      <section class="view" id="view-upgrades">
+        <div class="page-intro">
+          <span class="eyebrow">ENGENHARIA & TECNOLOGIA</span>
+          <h1>Hangar de <span>Equipamentos</span></h1>
+          <p>Adquira britadores gigantes, laboratórios e estações orbitais.</p>
+        </div>
+        <div class="upgrade-grid" id="upgradeGrid"></div>
+      </section>
+
+      <footer class="footer">
+        <span>© 2026 TERRAS RARAS: MINING TYCOON (v4.4 · Diretor VovôBrDias)</span>
+        <span>Save Duplo Firebase + LocalStorage · Economia Calibrada (25.000 Minério · 250.000 CR).</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Fechar">×</button>
+      <div class="modal-symbol sticker-bounce" id="modalSymbol">🎉</div>
+      <span class="eyebrow" id="modalEyebrow">CONQUISTA</span>
+      <h2 id="modalTitle">Operação realizada</h2>
+      <p id="modalText"></p>
+      <button class="btn btn-light full" id="modalOk" type="button">Continuar Jogando ▶</button>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+

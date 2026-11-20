@@ -1,0 +1,17 @@
+AUDITORIA v4.5
+
+Achados corrigidos:
+- O arquivo de origem era uma colagem de service worker, CSS, duas cópias iguais do HTML, JS e README; separados em arquivos reais.
+- A sincronização anterior fazia getDoc e onSnapshot em paralelo, permitindo disputa entre carregamento e snapshot. Agora a leitura inicial termina antes do listener.
+- O save antigo gravava o objeto do jogo diretamente no documento; agora usa gameState + schemaVersion + clientUpdatedAt e continua lendo documentos antigos.
+- Escritas em nuvem agora passam por fila serializada e capturam uma cópia do estado no momento do salvamento.
+- O estado local é versionado e a versão v4.4 é migrada automaticamente.
+- O service worker antigo tentava tratar qualquer GET como recurso do app; agora ignora requisições de outras origens (incluindo Firebase) e usa fallback offline para navegação.
+- Foram incluídas regras Firestore por UID e instruções explícitas de configuração.
+
+Limites importantes:
+- Não é possível validar a conexão real com seu Firebase daqui; isso depende das configurações Authentication/Firestore e das regras publicadas no seu Console.
+- Login anônimo não transfere o save entre dispositivos. É necessário vincular a conta a um login permanente para isso.
+- Os sons são gerados por Web Audio e a narração depende das vozes disponíveis no navegador/sistema.
+
+Validações locais: app.js passou em `node --check`; JSON do manifest validado.
